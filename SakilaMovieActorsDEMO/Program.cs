@@ -4,7 +4,10 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            DataAccess dataAccess = new();
+            ConsoleApp consoleApp = new(dataAccess);
+
+            consoleApp.Start();
         }
     }
 }
