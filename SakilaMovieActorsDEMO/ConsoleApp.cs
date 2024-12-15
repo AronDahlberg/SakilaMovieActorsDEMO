@@ -13,7 +13,7 @@
                 Console.Write(
                     "Enter 'e' to exit\n" +
                     "\n" +
-                    "Enter an actors name to list the movies they have acted in:\n");
+                    "Enter an actors full name to list the movies they have acted in:\n");
 
                 string input = Console.ReadLine() ?? "";
 
@@ -24,53 +24,28 @@
                     return;
                 }
 
-                IEnumerable<string>? actorMovies = _dataAccess.GetActorMovies(input);
+                string[] splitInput = input.Split(' ');
+                string actorFirstName = splitInput[0];
+                string actorLastName = string.Join(' ', splitInput.Skip(1));
+
+                List<string>? actorMovies = _dataAccess.GetActorMovies(actorFirstName, actorLastName);
 
                 if (actorMovies == null)
                 {
-                    ActorDoesNotExistErrorMessage(input);
-                    ContinueMessage();
+                    Console.Clear();
+                    Console.Write($"{Helper.CapitalizeFirstLetters(input)} does not exist or has not been in any movies\n");
+
+                    Helper.ContinueMessage();
                     Console.ReadKey();
+
                     continue;
                 }
 
-                WriteMoviesToConsole(input, actorMovies);
-                ContinueMessage();
+                Helper.WriteMoviesToConsole(Helper.CapitalizeFirstLetters(input), actorMovies);
+
+                Helper.ContinueMessage();
                 Console.ReadKey();
             }
-        }
-
-        private static void ActorDoesNotExistErrorMessage(string actorName)
-        {
-            Console.Clear();
-            Console.Write($"Actor '{actorName}' does not exist\n");
-        }
-
-        private static void WriteMoviesToConsole(string actorName, IEnumerable<string>? actorMovies)
-        {
-            ArgumentNullException.ThrowIfNull(actorMovies);
-
-            Console.Clear();
-
-            if (actorMovies.Count() == 1)
-            {
-                Console.Write($"Actor {actorName} has acted in the movie {actorMovies.First()}\n");
-                return;
-            }
-            
-            Console.Write($"Actor {actorName} has acted in these movies:\n");
-
-            foreach (string movieName in actorMovies)
-            {
-                Console.Write($"  {movieName}\n");
-            }
-        }
-
-        private static void ContinueMessage()
-        {
-            Console.Write(
-                    "\n" +
-                    "Press any button to continue\n");
         }
     }
 }
